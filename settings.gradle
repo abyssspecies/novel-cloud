@@ -1,0 +1,4 @@
+rootProject.name = 'novel-cloud'
+include 'novel-register'
+include 'novel-user'
+include 'novel-home'

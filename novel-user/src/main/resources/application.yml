@@ -17,7 +17,7 @@ server:
 
 spring:
   application:
-    name: novel-home
+    name: novel-user
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/novel_cloud?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10}
     username: ${SPRING_DATASOURCE_USERNAME:root}

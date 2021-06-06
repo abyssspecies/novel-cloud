@@ -1,0 +1,20 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: novel-register
+
+eureka:
+  instance:
+    hostname: localhost
+    metadata-map:
+      VERSION: 0.0.1
+  server:
+    # 关闭eureka自我保护模式，开发环境服务频繁启停，自我保护模式可能导致访问不到最新的服务，生产环境应该考虑打开
+    enable-self-preservation: false
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://${eureka.instance.hostname}:${server.port}/eureka/}

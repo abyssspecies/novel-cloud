@@ -1,0 +1,80 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.palantir.docker' version '0.26.0'
+    id 'java'
+    id 'java-library'
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://maven.aliyun.com/repository/public" }
+    mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+ext {
+    springBootVersion = "2.5.0"
+    springCloudVersion = "2020.0.2"
+    gradleDockerVersion = "0.26.0"
+    dockerNamespace = "abyssspecies.tech.io/novel"
+}
+
+allprojects {
+    group = 'io.abyssspecies.tech.novel'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+}
+
+subprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'com.palantir.docker'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenLocal()
+        maven { url "https://maven.aliyun.com/repository/public" }
+        mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+    }
+
+    dependencies {
+        implementation 'io.springfox:springfox-swagger2:2.9.2'
+        implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+
+    docker {
+        name "${dockerNamespace}/${bootJar.archiveBaseName.get()}"
+        dockerfile file('src/main/docker/Dockerfile')
+        files bootJar.archiveFile.get()
+        buildArgs(["JAR_FILE": "${bootJar.archiveFileName.get()}"])
+    }
+
+    tasks.getByPath('docker').dependsOn('build')
+}

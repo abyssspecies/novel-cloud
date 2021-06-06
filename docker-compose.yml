@@ -1,0 +1,37 @@
+version: '3'
+services:
+  novel-register:
+    image: abyssspecies.tech.io/novel/novel-register:latest
+    container_name: novel-register
+    restart: unless-stopped
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  novl-user:
+    image: abyssspecies.tech.io/novel/novel-user:latest
+    network_mode: bridge
+    container_name: novel-user
+    expose:
+      - 8300
+      - 8301
+    ports:
+      - 8300:8300
+      - 8301:8301
+    restart: unless-stopped
+    depends_on:
+      - novel-register
+    links:
+      - novel-register:eureka
+      - mysql
+    environment:
+      SPRING_DATASOURCE_PASSWORD: $SPRING_DATASOURCE_PASSWORD
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
