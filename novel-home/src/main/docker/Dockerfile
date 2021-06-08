@@ -18,15 +18,14 @@ ARG MIRROR=true
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
     ALPINE_HOST=dl-cdn.alpinelinux.org \
     MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public \
-    MIRROR_ALPINE_HOST=mirrors.aliyun.com
+    MIRROR_ALPINE_HOST=mirrors.ustc.edu.cn
 
-RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ;ALPINE_HOST=${MIRROR_ALPINE_HOST} ; sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_HOST}/g" /etc/apk/repositories ; fi \
-  && apk update -qq \
-  && apk upgrade \
-  && apk add --no-cache tini busybox-extras fontconfig ttf-dejavu curl bash bind-tools ca-certificates tzdata \
+RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST}; ALPINE_HOST=${MIRROR_ALPINE_HOST}; sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_HOST}/g" /etc/apk/repositories ; fi \
+  && apk add --no-cache tini curl wget vim ca-certificates tzdata \
   && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && apk del tzdata \
+  && rm -rf /var/cache/apk/* \
   && wget -qO /tmp/arthas.zip "${MAVEN_HOST}/com/taobao/arthas/arthas-packaging/${ARTHAS_VERSION}/arthas-packaging-${ARTHAS_VERSION}-bin.zip" \
   && mkdir -p /opt/arthas \
   && unzip /tmp/arthas.zip -d /opt/arthas \
