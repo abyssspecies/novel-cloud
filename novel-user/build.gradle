@@ -12,5 +12,4 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'mysql:mysql-connector-java'
     implementation 'com.zaxxer:HikariCP'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

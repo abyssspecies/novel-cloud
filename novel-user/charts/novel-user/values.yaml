@@ -1,0 +1,87 @@
+replicaCount: 1
+
+image:
+  repository: abyssspecies.tech.io/novel/novel-user
+  pullPolicy: IfNotPresent
+
+env:
+  open:
+    # Eureka 注册中心地址
+    EUREKA_DEFAULT_ZONE: http://dev.hzero.org:8000/eureka/
+    # 服务以IP地址注册
+    EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
+    # 数据库地址
+    SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/novel_cloud?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&allowPublicKeyRetrieval=true
+    # 数据库用户名
+    SPRING_DATASOURCE_USERNAME: root
+    # 数据库密码
+    SPRING_DATASOURCE_PASSWORD: root
+    # 连接池最小空闲连接数
+    #SPRING_DATASOURCE_MINIMUM_IDLE: 20
+    # 连接池允许的最大连接数
+    #SPRING_DATASOURCE_MAXIMUM_POOL_SIZE: 200
+    # 等待连接池分配连接的最大时长（毫秒）
+    #SPRING_DATASOURCE_CONNECTION_TIMEOUT: 30000
+    # IO线程数, 它主要执行非阻塞的任务
+    #SERVER_UNDERTOW_IO_THREADS: 4
+    # 阻塞任务线程池
+    #SERVER_UNDERTOW_WORKER_THREADS: 128
+    # 每块buffer的空间大小，越小空间被利用越充分
+    #SERVER_UNDERTOW_BUFFER_SIZE: 1024
+    # none（默认）、basic（记录请求方法，URL，响应状态代码以及执行时间（适合生产环境））
+    FEIGN_CLIENT_DEFAULT_LOGGER_LEVEL: basic
+    # 日志级别
+    #LOG_LEVEL: info
+    #JAVA_OPTS: >
+    #  -Xms1024m
+    #  -Xmx1536m
+
+metrics:
+  path: /actuator/prometheus
+  group: spring-boot
+
+logs:
+  parser: spring-boot
+
+service:
+  enabled: false
+  type: ClusterIP
+  port: 8300
+  name: novel-user
+deployment:
+  managementPort: 8301
+
+ingress:
+  enabled: false
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
+  limits:
+    # cpu: 100m
+    memory: 1.7Gi
+  requests:
+    # cpu: 100m
+    memory: 1.2Gi
+
+probes:
+  liveness:
+    httpGet:
+      path: /actuator/health/liveness
+      port: management
+    failureThreshold: 3
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  readiness:
+    httpGet:
+      path: /actuator/health/readiness
+      port: management
+    failureThreshold: 3
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
