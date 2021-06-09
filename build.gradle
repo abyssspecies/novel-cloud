@@ -18,7 +18,7 @@ ext {
     springBootVersion = "2.5.0"
     springCloudVersion = "2020.0.2"
     gradleDockerVersion = "0.26.0"
-    dockerNamespace = "abyssspecies.tech.io/novel"
+    dockerNamespace = "io.abyssspecies.tech/novel"
 }
 
 allprojects {
